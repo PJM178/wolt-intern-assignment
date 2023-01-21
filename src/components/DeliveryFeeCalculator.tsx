@@ -6,8 +6,34 @@ import * as yup from 'yup';
 import { DeliveryFeeValues } from '../Types';
 
 const DeliveryFeeCalculator = () => {
-  const [deliveryFee, setDeliveryFee] = useState<number | ''>(0);
-  const { register, handleSubmit, reset, formState, formState: { errors, isSubmitSuccessful } } = useForm<DeliveryFeeValues>();
+  const [deliveryFee, setDeliveryFee] = useState<number>(0);
+
+  const validationSchema = yup.object().shape({
+    cartValue: yup
+      .number()
+      .transform((value, originalValue) => {
+        return (originalValue === '' ? undefined : value);
+      })
+      .typeError('Value must be a number')
+      .required('Cart value is required'),
+    deliveryDistance: yup
+      .number()
+      .typeError('Value must be a number')
+      .required('Delivery Distance is required'),
+    items: yup
+      .number()
+      .typeError('Value must be a number')
+      .required('Amount of items in cart is required'),
+    orderTime: yup.string().required('Time of order is required'),
+  });
+
+  const { 
+    register, 
+    handleSubmit, 
+    reset, 
+    formState, 
+    formState: { errors, isSubmitSuccessful } 
+  } = useForm<DeliveryFeeValues>({ resolver: yupResolver(validationSchema) });
 
   const onSubmit = (data: DeliveryFeeValues) => {
     setDeliveryFee(data.items);
@@ -25,15 +51,8 @@ const DeliveryFeeCalculator = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="delivery-fee-form-field">
           <label>Cart Value</label>
-          <input {...register('cartValue', { 
-            required: true, 
-            valueAsNumber: true,
-            pattern: {
-              value: /^(0|[1-9]\d*)(\.\d+)?$/
-            }, 
-            })} 
-          />
-          {errors.cartValue && <span>Cart Value is required</span>}
+          <input {...register('cartValue')} type="text" />
+          <div>{errors.cartValue && <span>{errors.cartValue.message}</span>}</div> 
         </div>
         <div className="delivery-fee-form-field">
           <label>Delivery Distance</label>

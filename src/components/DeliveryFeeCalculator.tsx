@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Button, TextField } from '@mui/material';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 import { DeliveryFeeValues } from '../Types';
 
@@ -164,40 +165,102 @@ const DeliveryFeeCalculator = () => {
   return (
     <div className="delivery-fee-form-container">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="delivery-fee-form-field">
-          <label>Cart Value</label>
-          <input {...register('cartValue')} type="text" min="0" placeholder="Order value"/><span>€</span>
-          {errors.cartValue && <div><span>{errors.cartValue?.message}</span></div>}
-          {convertCommas(fieldValues.cartValue) < orderSurcharge && convertCommas(fieldValues.cartValue) >= 0 && fieldValues.cartValue
-            ? <div>
-                Order total less than {orderSurcharge.toFixed(2)}€ - small order surcharge: {smallOrderSurcharge(convertCommas(fieldValues.cartValue)).toFixed(2)}€
-              </div> 
-            : null}
+        <div className="delivery-fee-form-field-container">
+          {errors.cartValue 
+            ? <TextField 
+                InputProps={{ endAdornment: (<ErrorOutlineOutlinedIcon color="error" />) }} 
+                className="delivery-fee-form-field" 
+                error 
+                helperText={errors.cartValue?.message} 
+                label="Cart value" 
+                {...register('cartValue')} 
+                type="text"
+              />
+            : convertCommas(fieldValues.cartValue) < orderSurcharge && convertCommas(fieldValues.cartValue) >= 0 && fieldValues.cartValue 
+                ? <TextField 
+                    className="delivery-fee-form-field" 
+                    helperText={` Order total less than ${orderSurcharge.toFixed(2)}€ - small order surcharge: ${smallOrderSurcharge(convertCommas(fieldValues.cartValue)).toFixed(2)}€`} 
+                    label="Cart value" 
+                    {...register('cartValue')} 
+                    type="text"
+                  />
+                : <TextField 
+                    className="delivery-fee-form-field" 
+                    label="Cart value" 
+                    {...register('cartValue')} 
+                    type="text"
+                  />
+          }
         </div>
-        <div className="delivery-fee-form-field">
-          {/* <label>Delivery Distance</label> */}
-          <TextField label="Delivery distance" variant="outlined" {...register('deliveryDistance', { required: true })} type="text"></TextField>
-          {/* <input {...register('deliveryDistance', { required: true })} type="text" placeholder="Distance to deliver" /><span>m</span> */}
-          {errors.deliveryDistance && <div style={{ color: 'red' }}><span>{errors.deliveryDistance?.message}</span></div>}
+        <div className="delivery-fee-form-field-container">
+          {errors.deliveryDistance 
+            ? <TextField 
+                InputProps={{ endAdornment: (<ErrorOutlineOutlinedIcon color="error" />) }} 
+                className="delivery-fee-form-field" 
+                error 
+                helperText={errors.deliveryDistance?.message} 
+                label="Delivery distance" 
+                variant="outlined" 
+                {...register('deliveryDistance', { required: true })} 
+                type="text" 
+              /> 
+            : <TextField 
+                className="delivery-fee-form-field" 
+                label="Delivery distance" 
+                variant="outlined" 
+                {...register('deliveryDistance', { required: true })} 
+                type="text" 
+              />
+          }
         </div>
-        <div className="delivery-fee-form-field">
-          {/* <label>Amount of Items</label> */}
-          <TextField label="# of items" variant="outlined" {...register('items', { required: true })} type="text"></TextField>
-          {/* <input {...register('items', { required: true })} type="text" placeholder="Items in the order" /> */}
-          {errors.items && <div><span>{errors.items?.message}</span></div>}
+        <div className="delivery-fee-form-field-container">
+          {errors.items
+            ? <TextField 
+                InputProps={{ endAdornment: (<ErrorOutlineOutlinedIcon color="error" />) }} 
+                className="delivery-fee-form-field" 
+                error 
+                helperText={errors.items?.message} 
+                label="# of items" 
+                variant="outlined" 
+                {...register('items', { required: true })} 
+                type="text" 
+              /> 
+            : <TextField 
+                className="delivery-fee-form-field" 
+                label="# of items" 
+                variant="outlined" 
+                {...register('items', { required: true })} 
+                type="text" 
+              />
+          }
         </div>
-        <div className="delivery-fee-form-field">
-          {/* <label>Time</label> */}
-          <TextField label="Delivery time" variant="outlined" {...register('orderTime', { required: true })} type="datetime-local"></TextField>
-          {/* <input {...register('orderTime', { required: true })} type="datetime-local" /> */}
-          {errors.orderTime && <div><span>{errors.orderTime?.message}</span></div>}
+        <div className="delivery-fee-form-field-container">
+          {errors.orderTime
+            ? <TextField 
+                InputProps={{ endAdornment: (<ErrorOutlineOutlinedIcon color="error" />) }} 
+                className="delivery-fee-form-field" 
+                error 
+                helperText={errors.orderTime?.message} 
+                InputLabelProps={{ shrink: true }} 
+                label="Delivery time" 
+                variant="outlined" 
+                {...register('orderTime', { required: true })} 
+                type="datetime-local" 
+              /> 
+            : <TextField 
+                className="delivery-fee-form-field" 
+                InputLabelProps={{ shrink: true }} 
+                label="Delivery time" 
+                variant="outlined" {...register('orderTime', { required: true })} 
+                type="datetime-local" 
+              />
+          }
         </div>
-        <div className="delivery-fee-form-submit">
-          <Button type="submit" variant="contained">Calculate delivery fee</Button>
-          {/* <input type="submit" value="Calculate delivery fee" /> */}
+        <div className="delivery-fee-form-field-container" style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button type="submit" variant="contained">Calculate delivery fee</Button>
         </div>
       </form>
-      <div>Delivery fee: {deliveryFee}</div>
+      <div>Delivery fee: {deliveryFee}€</div>
     </div>
   );
 };

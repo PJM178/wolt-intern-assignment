@@ -23,7 +23,7 @@ const DeliveryFeeCalculator = () => {
   const rushHourFee = 1.2;
 
   // Validation schema for the form
-  const validationSchema = yup.object().shape({
+  const validationSchema: yup.SchemaOf<DeliveryFeeValues> = yup.object().shape({
     cartValue: yup
       .number()
       .min(0, 'Value must be positive')

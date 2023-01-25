@@ -15,8 +15,13 @@ body {
 
 .delivery-fee-form-field-container {
   padding: 0.5rem;
+  width: 50vw;
 }
 
 .delivery-fee-form-field {
   width: 50vw;
 }
+ 
+/* .delivery-fee-value {
+  display: inline;
+} */
